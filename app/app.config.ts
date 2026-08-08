@@ -1,6 +1,6 @@
 export default defineAppConfig({
-  title: 'Skote theme',
-  description: 'Skote theme App.',
+  title: 'Previnex',
+  description: 'Previnex App.',
 
   layout: {
     type: 'horizontal' as 'horizontal' | 'vertical',
