@@ -1,6 +1,7 @@
-export default defineNuxtPlugin(() => {
+export default defineNuxtPlugin((nuxtApp) => {
   const config = useRuntimeConfig();
   const token = useCookie<string | null>('auth-token');
+  const authStore = useAuthStore();
 
   const api = $fetch.create({
     baseURL: config.public.apiBase,
@@ -9,17 +10,20 @@ export default defineNuxtPlugin(() => {
       if (token.value) {
         options.headers.set('Authorization', `Bearer ${token.value}`);
       }
+
+      options.headers.set('Accept', 'application/json');
     },
 
     async onResponseError({ response }) {
-      if (response.status === 401) {
-        const authStore = useAuthStore();
+      if (response.status !== 401) {
+        return;
+      }
 
-        authStore.forceLogout();
+      authStore.forceLogout();
+      const route = useRoute();
 
-        if (useRoute().path !== '/login') {
-          await navigateTo('/login');
-        }
+      if (route.path !== '/login') {
+        await nuxtApp.runWithContext(() => navigateTo('/login'));
       }
     },
   });

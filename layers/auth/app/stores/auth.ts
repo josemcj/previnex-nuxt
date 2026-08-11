@@ -6,9 +6,17 @@ export const useAuthStore = defineStore('auth', () => {
     sameSite: 'lax',
   });
 
-  const user = ref<User | null>(null);
+  const user = useCookie<User | null>('auth-user', {
+    default: () => null,
+    sameSite: 'lax',
+  });
 
   const isLoggedIn = computed(() => Boolean(token.value));
+
+  const fullName = computed(() => {
+    if (!user.value) return '';
+    return [user.value.name, user.value.last_name, user.value.second_last_name].filter(Boolean).join(' ');
+  });
 
   function setSession(accessToken: string, authenticatedUser: User) {
     token.value = accessToken;
@@ -20,20 +28,12 @@ export const useAuthStore = defineStore('auth', () => {
     user.value = null;
   }
 
-  function getFullName(): string {
-    if (!user.value) {
-      return '';
-    }
-
-    return `${user.value.name} ${user.value.last_name}`.trim();
-  }
-
   return {
     token,
     user,
     isLoggedIn,
+    fullName,
     setSession,
     forceLogout,
-    getFullName,
   };
 });

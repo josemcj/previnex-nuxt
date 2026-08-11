@@ -9,12 +9,14 @@ const emit = defineEmits<{
 }>();
 
 const authStore = useAuthStore();
+const authApi = useAuthApi();
+const isLoggingOut = ref(false);
 
 const appConfig = useAppConfig();
 const notificationsStore = useNotificationsStore();
 
 const displayName = computed(() => {
-  return authStore.getFullName() || 'Usuario';
+  return authStore.fullName || 'Usuario';
 });
 
 const { items: notifications } = storeToRefs(notificationsStore);
@@ -41,8 +43,20 @@ async function toggleFullscreen() {
 }
 
 async function logout() {
-  authStore.forceLogout();
-  await navigateTo('/login');
+  if (isLoggingOut.value) {
+    return;
+  }
+
+  isLoggingOut.value = true;
+
+  try {
+    await authApi.logout();
+  } catch {
+  } finally {
+    authStore.forceLogout();
+    await navigateTo('/login');
+    isLoggingOut.value = false;
+  }
 }
 </script>
 
@@ -125,9 +139,9 @@ async function logout() {
 
           <BDropdownDivider />
 
-          <BDropdownItem href="#" @click.prevent="logout">
+          <BDropdownItem href="#" :disabled="isLoggingOut" @click.prevent="logout">
             <i class="bx bx-power-off font-size-16 align-middle me-1 text-danger" />
-            Cerrar sesión
+            {{ isLoggingOut ? 'Cerrando sesión...' : 'Cerrar sesión' }}
           </BDropdownItem>
         </BDropdown>
       </div>

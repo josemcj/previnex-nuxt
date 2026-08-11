@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import useVuelidate from '@vuelidate/core';
-import { email as emailValidator, helpers, required } from '@vuelidate/validators';
+import { helpers, required } from '@vuelidate/validators';
 import logo from '#layers/core/app/assets/images/logo.svg';
 import profileImage from '#layers/core/app/assets/images/profile-img.png';
 
@@ -13,19 +13,22 @@ useSeoMeta({
   title: 'Iniciar sesión',
 });
 
+const authStore = useAuthStore();
+const authApi = useAuthApi();
+
 const form = reactive({
-  email: 'admin@example.com',
-  password: 'password',
+  username: '',
+  password: '',
   remember: false,
 });
 
 const submitted = ref(false);
 const formMessage = ref('');
+const isSubmitting = ref(false);
 
 const rules = computed(() => ({
-  email: {
-    required: helpers.withMessage('El correo electrónico es obligatorio', required),
-    email: helpers.withMessage('Ingresa un correo electrónico válido', emailValidator),
+  username: {
+    required: helpers.withMessage('El nombre de usuario es obligatorio', required),
   },
 
   password: {
@@ -41,11 +44,38 @@ async function handleSubmit() {
 
   const isValid = await v$.value.$validate();
 
-  if (!isValid) {
+  if (!isValid || isSubmitting.value) {
     return;
   }
 
-  formMessage.value = 'El formulario es válido. La autenticación se conectará en el siguiente paso.';
+  isSubmitting.value = true;
+
+  try {
+    const response = await authApi.login({
+      username: form.username.trim(),
+      password: form.password,
+    });
+
+    authStore.setSession(response.data.token, response.data.user);
+
+    await navigateTo('/');
+  } catch (error: unknown) {
+    formMessage.value = getErrorMessage(error);
+  } finally {
+    isSubmitting.value = false;
+  }
+}
+
+function getErrorMessage(error: unknown): string {
+  if (typeof error === 'object' && error !== null && 'data' in error) {
+    const data = error.data;
+
+    if (typeof data === 'object' && data !== null && 'message' in data && typeof data.message === 'string') {
+      return data.message;
+    }
+  }
+
+  return 'No fue posible iniciar sesión. Inténtalo nuevamente.';
 }
 </script>
 
@@ -79,23 +109,24 @@ async function handleSubmit() {
             </NuxtLink>
           </div>
 
-          <BAlert v-if="formMessage" variant="info" class="mt-3" :model-value="true">
+          <BAlert v-if="formMessage" variant="danger" class="mt-3" :model-value="true">
             {{ formMessage }}
           </BAlert>
 
           <BForm class="p-2" novalidate @submit.prevent="handleSubmit">
-            <BFormGroup id="email-group" class="mb-3" label="Correo electrónico" label-for="email">
+            <BFormGroup id="username-group" class="mb-3" label="Usuario" label-for="username">
               <BFormInput
-                id="email"
-                v-model="form.email"
-                type="email"
-                autocomplete="email"
-                placeholder="Ingresa tu correo"
+                id="username"
+                v-model.trim="form.username"
+                type="text"
+                autocomplete="username"
+                placeholder="Ingresa tu usuario"
+                :disabled="isSubmitting"
                 :class="{
-                  'is-invalid': submitted && v$.email.$error,
+                  'is-invalid': submitted && v$.username.$error,
                 }" />
 
-              <div v-for="error in v$.email.$errors" :key="error.$uid" class="invalid-feedback">
+              <div v-for="error in v$.username.$errors" :key="error.$uid" class="invalid-feedback">
                 {{ error.$message }}
               </div>
             </BFormGroup>
@@ -107,6 +138,7 @@ async function handleSubmit() {
                 type="password"
                 autocomplete="current-password"
                 placeholder="Ingresa tu contraseña"
+                :disabled="isSubmitting"
                 :class="{
                   'is-invalid': submitted && v$.password.$error,
                 }" />
@@ -119,7 +151,11 @@ async function handleSubmit() {
             <BFormCheckbox id="remember" v-model="form.remember" class="mb-3">Recordarme</BFormCheckbox>
 
             <div class="d-grid">
-              <BButton type="submit" variant="primary">Iniciar sesión</BButton>
+              <BButton type="submit" variant="primary" :disabled="isSubmitting">
+                <BSpinner v-if="isSubmitting" small class="me-2" />
+
+                {{ isSubmitting ? 'Iniciando sesión...' : 'Iniciar sesión' }}
+              </BButton>
             </div>
           </BForm>
         </div>
