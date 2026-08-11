@@ -6,6 +6,7 @@ import profileImage from '#layers/core/app/assets/images/profile-img.png';
 
 definePageMeta({
   layout: 'auth',
+  requiresAuth: false,
   middleware: 'guest',
 });
 
