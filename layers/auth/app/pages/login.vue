@@ -13,6 +13,7 @@ useSeoMeta({
   title: 'Iniciar sesión',
 });
 
+const appConfig = useAppConfig();
 const authStore = useAuthStore();
 const authApi = useAuthApi();
 
@@ -162,7 +163,7 @@ function getErrorMessage(error: unknown): string {
       </div>
 
       <div class="mt-5 text-center">
-        <p>© {{ new Date().getFullYear() }} Skote</p>
+        <p>© {{ new Date().getFullYear() }} {{ appConfig.title }}</p>
       </div>
     </div>
   </div>
