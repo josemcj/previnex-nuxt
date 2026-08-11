@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { NuxtError } from '#app';
+import errorImage from '#layers/core/app/assets/images/error-img.png';
 
 const props = defineProps<{
   error: NuxtError;
@@ -25,7 +26,7 @@ function returnHome() {
         <BCol lg="6">
           <div class="text-center">
             <img
-              src="~/assets/images/error-img.png"
+              :src="errorImage"
               alt="Página no encontrada"
               class="img-fluid mb-4"
               style="max-height: 280px" />
@@ -42,7 +43,7 @@ function returnHome() {
               {{
                 isNotFound
                   ? 'La página que estás buscando no existe o fue movida.'
-                  : error.statusMessage || 'No fue posible completar la solicitud.'
+                  : error.message || 'No fue posible completar la solicitud.'
               }}
             </p>
 

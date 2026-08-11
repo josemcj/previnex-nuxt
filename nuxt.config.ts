@@ -4,6 +4,10 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   modules: ['@pinia/nuxt', '@bootstrap-vue-next/nuxt'],
 
+  pinia: {
+    storesDirs: ['./stores/**', '../layers/*/app/stores/**'],
+  },
+
   bootstrapVueNext: {
     css: false,
     directives: {
@@ -11,7 +15,7 @@ export default defineNuxtConfig({
     },
   },
 
-  css: ['bootstrap-vue-next/dist/bootstrap-vue-next.css', '~/assets/styles/app.scss'],
+  css: ['bootstrap-vue-next/dist/bootstrap-vue-next.css', '#layers/core/app/assets/styles/app.scss'],
 
   runtimeConfig: {
     public: {
