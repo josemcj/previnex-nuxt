@@ -32,13 +32,46 @@ onBeforeUnmount(() => {
 
 <template>
   <div class="dataTables_filter">
-    <label class="d-inline-flex align-items-center mb-0">
+    <label class="search-field mb-0">
       <i class="bx bx-search-alt search-icon" />
       <BFormInput
         v-model="search"
         type="search"
         placeholder="Buscar..."
-        class="form-control rounded bg-light border-0 ms-2" />
+        class="search-input form-control rounded bg-light border-0" />
     </label>
   </div>
 </template>
+
+<style scoped>
+.dataTables_filter,
+.search-field {
+  width: 100%;
+}
+
+.search-field {
+  position: relative;
+  display: block;
+}
+
+.search-icon {
+  position: absolute;
+  top: 50%;
+  left: 0.8rem;
+  z-index: 2;
+  transform: translateY(-50%);
+}
+
+.search-input {
+  width: 100%;
+  padding-left: 2.25rem;
+}
+
+@media (min-width: 576px) {
+  .dataTables_filter,
+  .search-field,
+  .search-input {
+    width: 240px;
+  }
+}
+</style>

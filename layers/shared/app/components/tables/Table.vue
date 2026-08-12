@@ -94,7 +94,7 @@ function statusId(item: TableRow): TableStatusValue | undefined {
       </BButton>
     </div>
 
-    <div class="d-flex flex-column flex-sm-row align-items-sm-center gap-3 ms-lg-auto">
+    <div class="table-controls d-flex flex-column flex-sm-row align-items-sm-center gap-3 ms-lg-auto">
       <TablesSearch @search="handleSearch" />
       <TablesPerPageSelect :options="perPageOptions" :option-selected="pageSize" @change="handlePerPageChange" />
     </div>
@@ -115,30 +115,30 @@ function statusId(item: TableRow): TableStatusValue | undefined {
       </template>
 
       <template #cell(actions)="data">
-        <ul class="list-inline mb-0">
-          <li v-if="showEditBtn" class="list-inline-item">
-            <BButton
-              v-b-tooltip.hover
-              class="action-button action-button--edit p-1"
-              variant="link"
-              title="Editar"
-              @click="emit('updateItem', data.item)">
-              <i class="bx bx-edit-alt font-size-20" />
-            </BButton>
-          </li>
+        <div class="d-inline-flex align-items-center gap-2" role="group" aria-label="Acciones del registro">
+          <BButton
+            v-if="showEditBtn"
+            v-b-tooltip.hover
+            class="action-button action-button--edit p-1"
+            variant="link"
+            title="Editar"
+            aria-label="Editar"
+            @click="emit('updateItem', data.item)">
+            <i class="bx bx-edit-alt font-size-20" aria-hidden="true" />
+          </BButton>
 
-          <li v-if="showDeleteBtn && statusId(data.item) != null" class="list-inline-item">
-            <BButton
-              v-b-tooltip.hover
-              class="action-button p-1"
-              :class="Number(statusId(data.item)) === 1 ? 'action-button--delete' : 'action-button--activate'"
-              variant="link"
-              :title="Number(statusId(data.item)) === 1 ? 'Eliminar' : 'Activar'"
-              @click="emit('deleteItem', data.item.id, data.item)">
-              <TablesStatusIcon :status="statusId(data.item) ?? 0" />
-            </BButton>
-          </li>
-        </ul>
+          <BButton
+            v-if="showDeleteBtn && statusId(data.item) != null"
+            v-b-tooltip.hover
+            class="action-button p-1"
+            :class="Number(statusId(data.item)) === 1 ? 'action-button--delete' : 'action-button--activate'"
+            variant="link"
+            :title="Number(statusId(data.item)) === 1 ? 'Eliminar' : 'Activar'"
+            :aria-label="Number(statusId(data.item)) === 1 ? 'Eliminar' : 'Activar'"
+            @click="emit('deleteItem', data.item.id, data.item)">
+            <TablesStatusIcon :status="statusId(data.item) ?? 0" aria-hidden="true" />
+          </BButton>
+        </div>
       </template>
     </BTable>
   </div>
@@ -147,6 +147,16 @@ function statusId(item: TableRow): TableStatusValue | undefined {
 </template>
 
 <style scoped>
+.table-controls {
+  width: 100%;
+}
+
+@media (min-width: 992px) {
+  .table-controls {
+    width: auto;
+  }
+}
+
 .action-button {
   border-radius: 0.35rem;
   line-height: 1;
