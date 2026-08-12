@@ -12,9 +12,33 @@ const emit = defineEmits<{
 
 const route = useRoute();
 const expandedMenuId = ref<number | null>(null);
+const menuSearchTerms = reactive<Record<number, string>>({});
 
 function hasChildren(item: HorizontalMenuItem): boolean {
   return Boolean(item.subItems?.length);
+}
+
+function normalizeText(value: string): string {
+  return value
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .trim();
+}
+
+function getSearchTerm(itemId: number): string {
+  return menuSearchTerms[itemId] ?? '';
+}
+
+function getFilteredSubItems(item: HorizontalMenuItem): HorizontalMenuItem[] {
+  const subItems = item.subItems ?? [];
+  const searchTerm = normalizeText(getSearchTerm(item.id));
+
+  if (!searchTerm) {
+    return subItems;
+  }
+
+  return subItems.filter((subItem) => normalizeText(subItem.label).includes(searchTerm));
 }
 
 function isItemActive(item: HorizontalMenuItem): boolean {
@@ -31,6 +55,9 @@ function toggleSubmenu(item: HorizontalMenuItem) {
 
 function closeNavigation() {
   expandedMenuId.value = null;
+  Object.keys(menuSearchTerms).forEach((key) => {
+    menuSearchTerms[Number(key)] = '';
+  });
   emit('close');
 }
 
@@ -83,12 +110,22 @@ watch(
 
               <div
                 v-if="hasChildren(item)"
-                class="dropdown-menu"
+                class="dropdown-menu previnex-topnav-dropdown"
                 :class="{
                   show: expandedMenuId === item.id,
                 }">
+                <div class="previnex-topnav-search">
+                  <input
+                    v-model="menuSearchTerms[item.id]"
+                    type="search"
+                    class="form-control"
+                    placeholder="Buscar..."
+                    :aria-label="`Buscar en ${item.label}`"
+                    @click.stop />
+                </div>
+
                 <NuxtLink
-                  v-for="subItem in item.subItems"
+                  v-for="subItem in getFilteredSubItems(item)"
                   :key="subItem.id"
                   :to="subItem.link || '/'"
                   class="dropdown-item"
@@ -96,6 +133,10 @@ watch(
                   @click="closeNavigation">
                   {{ subItem.label }}
                 </NuxtLink>
+
+                <div v-if="!getFilteredSubItems(item).length" class="previnex-topnav-empty">
+                  No se encontraron resultados
+                </div>
               </div>
             </li>
           </ul>
