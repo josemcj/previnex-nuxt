@@ -31,16 +31,14 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <BCol cols="12" md="6">
-    <div class="dataTables_filter text-md-end">
-      <label class="d-inline-flex align-items-center">
-        <i class="mdi mdi-magnify search-icon" />
-        <BFormInput
-          v-model="search"
-          type="search"
-          placeholder="Buscar..."
-          class="form-control rounded bg-light border-0 ms-2" />
-      </label>
-    </div>
-  </BCol>
+  <div class="dataTables_filter">
+    <label class="d-inline-flex align-items-center mb-0">
+      <i class="bx bx-search-alt search-icon" />
+      <BFormInput
+        v-model="search"
+        type="search"
+        placeholder="Buscar..."
+        class="form-control rounded bg-light border-0 ms-2" />
+    </label>
+  </div>
 </template>

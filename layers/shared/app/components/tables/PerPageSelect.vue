@@ -27,13 +27,11 @@ watch(itemsPerPage, (value) => emit('change', value));
 </script>
 
 <template>
-  <BCol cols="12" md="6">
-    <div class="dataTables_length">
-      <label class="d-inline-flex align-items-center">
-        Mostrando&nbsp;
-        <BFormSelect v-model="itemsPerPage" size="sm" :options="options" />
-        &nbsp;registros
-      </label>
-    </div>
-  </BCol>
+  <div class="dataTables_length">
+    <label class="d-inline-flex align-items-center mb-0 text-nowrap">
+      Mostrando&nbsp;
+      <BFormSelect v-model="itemsPerPage" size="sm" :options="options" />
+      &nbsp;registros
+    </label>
+  </div>
 </template>

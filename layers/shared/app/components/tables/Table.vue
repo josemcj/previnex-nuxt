@@ -81,26 +81,24 @@ function statusId(item: TableRow): TableStatusValue | undefined {
 </script>
 
 <template>
-  <BRow>
-    <BCol md="6">
-      <div v-if="showAddBtn" class="mb-3">
-        <BLink v-if="addBtnHref" :to="addBtnHref" class="btn btn-primary">
-          <i class="mdi mdi-plus" />
-          Agregar {{ addBtnText }}
-        </BLink>
+  <div class="table-toolbar d-flex flex-column flex-lg-row align-items-lg-center gap-3 mb-3">
+    <div v-if="showAddBtn">
+      <BLink v-if="addBtnHref" :to="addBtnHref" class="btn btn-primary text-nowrap">
+        <i class="bx bx-plus align-middle" />
+        Agregar {{ addBtnText }}
+      </BLink>
 
-        <BButton v-else variant="primary" @click="emit('addBtnClick')">
-          <i class="mdi mdi-plus" />
-          Agregar {{ addBtnText }}
-        </BButton>
-      </div>
-    </BCol>
-  </BRow>
+      <BButton v-else variant="primary" class="text-nowrap" @click="emit('addBtnClick')">
+        <i class="bx bx-plus align-middle" />
+        Agregar {{ addBtnText }}
+      </BButton>
+    </div>
 
-  <BRow>
-    <TablesPerPageSelect :options="perPageOptions" :option-selected="pageSize" @change="handlePerPageChange" />
-    <TablesSearch @search="handleSearch" />
-  </BRow>
+    <div class="d-flex flex-column flex-sm-row align-items-sm-center gap-3 ms-lg-auto">
+      <TablesSearch @search="handleSearch" />
+      <TablesPerPageSelect :options="perPageOptions" :option-selected="pageSize" @change="handlePerPageChange" />
+    </div>
+  </div>
 
   <div class="table-responsive">
     <BTable :busy="isBusy" :items="items" :fields="fields" responsive="sm" striped hover>
@@ -121,18 +119,19 @@ function statusId(item: TableRow): TableStatusValue | undefined {
           <li v-if="showEditBtn" class="list-inline-item">
             <BButton
               v-b-tooltip.hover
-              class="px-2 text-primary"
+              class="action-button action-button--edit p-1"
               variant="link"
               title="Editar"
               @click="emit('updateItem', data.item)">
-              <i class="uil uil-edit font-size-20" />
+              <i class="bx bx-edit-alt font-size-20" />
             </BButton>
           </li>
 
           <li v-if="showDeleteBtn && statusId(data.item) != null" class="list-inline-item">
             <BButton
               v-b-tooltip.hover
-              class="px-2 text-primary"
+              class="action-button p-1"
+              :class="Number(statusId(data.item)) === 1 ? 'action-button--delete' : 'action-button--activate'"
               variant="link"
               :title="Number(statusId(data.item)) === 1 ? 'Eliminar' : 'Activar'"
               @click="emit('deleteItem', data.item.id, data.item)">
@@ -146,3 +145,25 @@ function statusId(item: TableRow): TableStatusValue | undefined {
 
   <TablesPagination :current-page="page" :total-rows="totalRows" :per-page="pageSize" @change="handlePageChange" />
 </template>
+
+<style scoped>
+.action-button {
+  border-radius: 0.35rem;
+  line-height: 1;
+}
+
+.action-button--edit {
+  color: var(--bs-primary);
+  background-color: rgba(var(--bs-primary-rgb), 0.12);
+}
+
+.action-button--delete {
+  color: var(--bs-danger);
+  background-color: rgba(var(--bs-danger-rgb), 0.14);
+}
+
+.action-button--activate {
+  color: var(--bs-success);
+  background-color: rgba(var(--bs-success-rgb), 0.14);
+}
+</style>
