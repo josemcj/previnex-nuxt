@@ -10,6 +10,7 @@ const emit = defineEmits<{
   close: [];
 }>();
 
+
 const route = useRoute();
 const expandedMenuId = ref<number | null>(null);
 const menuSearchTerms = reactive<Record<number, string>>({});
