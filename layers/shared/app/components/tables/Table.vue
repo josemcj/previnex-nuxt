@@ -1,6 +1,6 @@
 <script setup lang="ts" generic="T extends TableRow">
 import type { TableFieldRaw } from 'bootstrap-vue-next';
-import type { TableRow, TableStatusValue } from '~~/layers/shared/app/types/table';
+import type { TableRow } from '~~/layers/shared/app/types/table';
 
 const props = withDefaults(
   defineProps<{
@@ -71,12 +71,13 @@ function handlePerPageChange(value: number) {
   emit('change', page.value, pageSize.value);
 }
 
-function statusId(item: TableRow): number {
-  if (typeof item.status === 'object') {
-    return Number(item.status?.id);
-  }
+function statusId(item: TableRow): number | undefined {
+  const value = typeof item.status === 'object' ? item.status?.id : (item.status ?? item.status_id);
 
-  return Number(item.status_id);
+  if (value === undefined || value === null || value === '') return undefined;
+
+  const parsedValue = Number(value);
+  return Number.isFinite(parsedValue) ? parsedValue : undefined;
 }
 </script>
 
