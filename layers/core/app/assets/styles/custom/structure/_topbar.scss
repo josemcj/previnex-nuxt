@@ -32,10 +32,17 @@
     padding: 0 1.5rem;
     text-align: center;
     width: $navbar-brand-box-width;
+    display: flex;
+    align-items: center;
 }
 
 .logo {
-    line-height: 70px;
+    height: $header-height;
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-start;
+    line-height: 1;
 
     .logo-sm {
         display: none;
@@ -44,6 +51,21 @@
 
 .logo-light {
     display: none;
+}
+
+.previnex-navbar-logo {
+    display: block;
+    height: auto;
+    max-width: 100%;
+    object-fit: contain;
+}
+
+.previnex-navbar-logo-lg {
+    width: clamp(165px, 14vw, 230px);
+}
+
+.previnex-navbar-logo-sm {
+    width: clamp(78px, 8vw, 110px);
 }
 
 /* Search */
@@ -86,6 +108,14 @@
 @media (max-width: 992px) {
     .navbar-brand-box {
         width: auto;
+    }
+
+    .previnex-navbar-logo-lg {
+        width: 160px;
+    }
+
+    .previnex-navbar-logo-sm {
+        width: 92px;
     }
 
     .logo {
