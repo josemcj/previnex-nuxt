@@ -3,6 +3,15 @@ import { helpers, maxLength, required } from '@vuelidate/validators';
 import type { ModalMode } from '#layers/shared/app/types/crud';
 import type { Standard, StandardPayload } from '#layers/standards/app/types/standard';
 
+type StandardForm = Omit<StandardPayload, 'status_id'>;
+
+const initialForm: StandardForm = {
+  norm_key: '',
+  complement_1: '',
+  complement_2: null,
+  complement_3: null,
+};
+
 const props = withDefaults(
   defineProps<{
     mode?: ModalMode;
@@ -22,17 +31,12 @@ const emit = defineEmits<{
 
 const { createStandard, updateStandard } = useStandardsApi();
 const validator = useValidation();
+const formHelper = useForm();
 const isSubmitting = ref(false);
 const formMessage = ref('');
 const backendErrors = ref<Record<string, string[]>>({});
 
-const form = reactive<StandardPayload>({
-  norm_key: '',
-  complement_1: '',
-  complement_2: null,
-  complement_3: null,
-  status_id: 1,
-});
+const form = reactive<StandardForm>({ ...initialForm });
 
 const rules = {
   form: {
@@ -58,13 +62,7 @@ const isEditing = computed(() => props.mode === 'edit');
 const modalTitle = computed(() => `${isEditing.value ? 'Editar' : 'Agregar'} norma`);
 
 function resetForm() {
-  Object.assign(form, {
-    norm_key: '',
-    complement_1: '',
-    complement_2: null,
-    complement_3: null,
-    status_id: 1,
-  } satisfies StandardPayload);
+  formHelper.resetReactive(form, initialForm);
 
   formMessage.value = '';
   backendErrors.value = {};
@@ -76,13 +74,12 @@ function populateForm(standard: Standard | null) {
 
   if (!standard) return;
 
-  Object.assign(form, {
+  syncObject(form, {
     norm_key: standard.norm_key,
     complement_1: standard.complement_1 ?? '',
     complement_2: standard.complement_2,
     complement_3: standard.complement_3,
-    status_id: Number(standard.status_id),
-  } satisfies StandardPayload);
+  });
 }
 
 function normalizeOptional(value: string | null): string | null {
@@ -103,7 +100,7 @@ async function onSubmit() {
     complement_1: form.complement_1.trim(),
     complement_2: normalizeOptional(form.complement_2),
     complement_3: normalizeOptional(form.complement_3),
-    status_id: 1,
+    status_id: isEditing.value && props.standard ? Number(props.standard.status_id) : 1,
   };
 
   try {
