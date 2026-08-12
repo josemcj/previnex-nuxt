@@ -95,6 +95,7 @@ async function onChangeStandardStatus(id: unknown, standard: Standard) {
       :items="tableItems"
       :is-busy="isBusy"
       :current-page="currentPage"
+      :show-upload-layout-btn="false"
       :per-page="perPage"
       :total-rows="totalRows"
       @search="onSearch"
