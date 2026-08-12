@@ -6,6 +6,28 @@ button,a {
   outline: none !important;
 }
 
+.btn-icon {
+  display: inline-flex;
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.35rem;
+  line-height: 1;
+  text-decoration: none !important;
+
+  &:hover,
+  &:focus,
+  &:active {
+    text-decoration: none !important;
+  }
+
+  > i {
+    font-size: 1.25rem;
+  }
+}
+
 
 // Rounded Buttons
 .btn-rounded {

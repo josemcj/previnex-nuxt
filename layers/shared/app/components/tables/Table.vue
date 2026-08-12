@@ -11,6 +11,7 @@ const props = withDefaults(
     perPage?: number;
     totalRows: number;
     showAddBtn?: boolean;
+    showUploadLayoutBtn?: boolean;
     perPageOptions?: readonly number[];
     showEditBtn?: boolean;
     showDeleteBtn?: boolean;
@@ -21,6 +22,7 @@ const props = withDefaults(
   {
     perPage: 10,
     showAddBtn: true,
+    showUploadLayoutBtn: true,
     perPageOptions: () => [10, 25, 50, 100],
     showEditBtn: true,
     showDeleteBtn: true,
@@ -33,6 +35,7 @@ const props = withDefaults(
 const emit = defineEmits<{
   search: [value: string];
   addBtnClick: [];
+  uploadLayoutBtnClick: [];
   change: [currentPage: number, perPage: number];
   updateItem: [item: T];
   deleteItem: [id: unknown, item: T];
@@ -87,6 +90,11 @@ function handleAddItem(event: MouseEvent) {
   emit('addBtnClick');
 }
 
+function handleUploadLayout(event: MouseEvent) {
+  releaseFocus(event);
+  emit('uploadLayoutBtnClick');
+}
+
 function handleDeleteItem(event: MouseEvent, item: T) {
   releaseFocus(event);
   emit('deleteItem', item.id, item);
@@ -104,15 +112,28 @@ function statusId(item: TableRow): number | undefined {
 
 <template>
   <div class="table-toolbar d-flex flex-column flex-lg-row align-items-lg-center gap-3 mb-3">
-    <div v-if="showAddBtn">
-      <BLink v-if="addBtnHref" :to="addBtnHref" class="btn btn-primary text-nowrap">
-        <i class="bx bx-plus align-middle" />
-        Agregar {{ addBtnText }}
-      </BLink>
+    <div v-if="showAddBtn || showUploadLayoutBtn" class="d-flex align-items-center gap-2">
+      <template v-if="showAddBtn">
+        <BLink v-if="addBtnHref" :to="addBtnHref" class="btn btn-primary text-nowrap">
+          <i class="bx bx-plus align-middle" />
+          Agregar {{ addBtnText }}
+        </BLink>
 
-      <BButton v-else variant="primary" class="text-nowrap" @click="handleAddItem">
-        <i class="bx bx-plus align-middle" />
-        Agregar {{ addBtnText }}
+        <BButton v-else variant="primary" class="text-nowrap" @click="handleAddItem">
+          <i class="bx bx-plus align-middle" />
+          Agregar {{ addBtnText }}
+        </BButton>
+      </template>
+
+      <BButton
+        v-if="showUploadLayoutBtn"
+        v-b-tooltip.hover
+        variant="link"
+        class="btn-icon btn-soft-primary"
+        title="Subir layout"
+        aria-label="Subir layout"
+        @click="handleUploadLayout">
+        <i class="bx bx-cloud-upload" aria-hidden="true" />
       </BButton>
     </div>
 
@@ -141,19 +162,19 @@ function statusId(item: TableRow): number | undefined {
           <BButton
             v-if="showEditBtn && statusId(data.item) != 2"
             v-b-tooltip.hover
-            class="action-button action-button--edit p-1"
+            class="btn-icon btn-soft-primary"
             variant="link"
             title="Editar"
             aria-label="Editar"
             @click="handleUpdateItem($event, data.item)">
-            <i class="bx bx-edit-alt font-size-20" aria-hidden="true" />
+            <i class="bx bx-edit-alt" aria-hidden="true" />
           </BButton>
 
           <BButton
             v-if="showDeleteBtn && statusId(data.item) != null"
             v-b-tooltip.hover
-            class="action-button p-1"
-            :class="statusId(data.item) === 1 ? 'action-button--delete' : 'action-button--activate'"
+            class="btn-icon"
+            :class="statusId(data.item) === 1 ? 'btn-soft-danger' : 'btn-soft-success'"
             variant="link"
             :title="statusId(data.item) === 1 ? 'Eliminar' : 'Activar'"
             :aria-label="statusId(data.item) === 1 ? 'Eliminar' : 'Activar'"
@@ -179,23 +200,4 @@ function statusId(item: TableRow): number | undefined {
   }
 }
 
-.action-button {
-  border-radius: 0.35rem;
-  line-height: 1;
-}
-
-.action-button--edit {
-  color: var(--bs-primary);
-  background-color: rgba(var(--bs-primary-rgb), 0.12);
-}
-
-.action-button--delete {
-  color: var(--bs-danger);
-  background-color: rgba(var(--bs-danger-rgb), 0.14);
-}
-
-.action-button--activate {
-  color: var(--bs-success);
-  background-color: rgba(var(--bs-success-rgb), 0.14);
-}
 </style>
