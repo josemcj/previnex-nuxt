@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { TableFieldRaw } from 'bootstrap-vue-next';
 import type { BreadcrumbItem } from '#layers/core/app/types/utils';
+import type { ModalMode } from '#layers/shared/app/types/crud';
 import type { Standard } from '#layers/standards/app/types/standard';
 
 definePageMeta({
@@ -34,7 +35,7 @@ const { getStandards, changeStandardStatus } = useStandardsApi();
 const swal = useSwal();
 
 const showModal = ref(false);
-const modalMode = ref<'create' | 'edit'>('create');
+const modalMode = ref<ModalMode>('create');
 const selectedStandard = ref<Standard | null>(null);
 
 const { tableItems, isBusy, currentPage, perPage, totalRows, fetchData, onSearch, onTableChange } =
@@ -77,14 +78,8 @@ async function onChangeStandardStatus(id: unknown, standard: Standard) {
     await swal.success(response.message);
     await fetchData();
   } catch (error: unknown) {
-    let message = `No fue posible ${action} la norma.`;
-
-    if (typeof error === 'object' && error !== null && 'data' in error) {
-      const data = error.data;
-      if (typeof data === 'object' && data !== null && 'message' in data && typeof data.message === 'string') {
-        message = data.message;
-      }
-    }
+    const data = getApiErrorData(error);
+    const message = data.message ?? `No fue posible ${action} la norma.`;
 
     await swal.error({ title: 'Error', text: message });
   }

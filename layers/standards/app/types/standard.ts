@@ -28,10 +28,3 @@ export interface StandardPayload {
   complement_3: string | null;
   status_id: number;
 }
-
-export interface StandardApiResponse {
-  status: boolean;
-  code: number;
-  message: string;
-  data: Standard;
-}

@@ -1,14 +1,7 @@
 <script setup lang="ts">
-import useVuelidate from '@vuelidate/core';
 import { helpers, maxLength, required } from '@vuelidate/validators';
+import type { ModalMode } from '#layers/shared/app/types/crud';
 import type { Standard, StandardPayload } from '#layers/standards/app/types/standard';
-
-type ModalMode = 'create' | 'edit';
-
-interface ApiErrorData {
-  message?: string;
-  errors?: Record<string, string[]>;
-}
 
 const props = withDefaults(
   defineProps<{
@@ -28,6 +21,7 @@ const emit = defineEmits<{
 }>();
 
 const { createStandard, updateStandard } = useStandardsApi();
+const validator = useValidation();
 const isSubmitting = ref(false);
 const formMessage = ref('');
 const backendErrors = ref<Record<string, string[]>>({});
@@ -41,32 +35,27 @@ const form = reactive<StandardPayload>({
 });
 
 const rules = {
-  norm_key: {
-    required: helpers.withMessage('La clave de la norma es obligatoria.', required),
-    maxLength: helpers.withMessage('La clave no debe exceder los 255 caracteres.', maxLength(255)),
-  },
-  complement_1: {
-    required: helpers.withMessage('El complemento 1 es obligatorio.', required),
-    maxLength: helpers.withMessage('El complemento 1 no debe exceder los 255 caracteres.', maxLength(255)),
-  },
-  complement_2: {
-    maxLength: helpers.withMessage('El complemento 2 no debe exceder los 255 caracteres.', maxLength(255)),
-  },
-  complement_3: {
-    maxLength: helpers.withMessage('El complemento 3 no debe exceder los 255 caracteres.', maxLength(255)),
-  },
-  status_id: {
-    required: helpers.withMessage('El estatus es obligatorio.', required),
+  form: {
+    norm_key: {
+      required: helpers.withMessage('La clave de la norma es obligatoria.', required),
+      maxLength: helpers.withMessage('La clave no debe exceder los 255 caracteres.', maxLength(255)),
+    },
+    complement_1: {
+      required: helpers.withMessage('El complemento 1 es obligatorio.', required),
+      maxLength: helpers.withMessage('El complemento 1 no debe exceder los 255 caracteres.', maxLength(255)),
+    },
+    complement_2: {
+      maxLength: helpers.withMessage('El complemento 2 no debe exceder los 255 caracteres.', maxLength(255)),
+    },
+    complement_3: {
+      maxLength: helpers.withMessage('El complemento 3 no debe exceder los 255 caracteres.', maxLength(255)),
+    },
   },
 };
 
-const v$ = useVuelidate(rules, form);
+validator.create(rules, form);
 const isEditing = computed(() => props.mode === 'edit');
 const modalTitle = computed(() => `${isEditing.value ? 'Editar' : 'Agregar'} norma`);
-const statusOptions = [
-  { value: 1, text: 'Activo' },
-  { value: 2, text: 'Inactivo' },
-];
 
 function resetForm() {
   Object.assign(form, {
@@ -79,7 +68,7 @@ function resetForm() {
 
   formMessage.value = '';
   backendErrors.value = {};
-  v$.value.$reset();
+  validator.reset();
 }
 
 function populateForm(standard: Standard | null) {
@@ -101,18 +90,9 @@ function normalizeOptional(value: string | null): string | null {
   return normalized || null;
 }
 
-function getApiError(error: unknown): ApiErrorData {
-  if (typeof error === 'object' && error !== null && 'data' in error) {
-    const data = error.data;
-    if (typeof data === 'object' && data !== null) return data as ApiErrorData;
-  }
-
-  return {};
-}
-
 async function onSubmit() {
-  const isValid = await v$.value.$validate();
-  if (!isValid || isSubmitting.value) return;
+  validator.touch();
+  if (validator.isInvalid() || isSubmitting.value) return;
 
   isSubmitting.value = true;
   formMessage.value = '';
@@ -123,7 +103,7 @@ async function onSubmit() {
     complement_1: form.complement_1.trim(),
     complement_2: normalizeOptional(form.complement_2),
     complement_3: normalizeOptional(form.complement_3),
-    status_id: Number(form.status_id),
+    status_id: 1,
   };
 
   try {
@@ -135,7 +115,7 @@ async function onSubmit() {
     showModal.value = false;
     emit('saved', response.message);
   } catch (error: unknown) {
-    const data = getApiError(error);
+    const data = getApiErrorData(error);
     formMessage.value = data.message ?? 'No fue posible guardar la norma.';
     backendErrors.value = data.errors ?? {};
   } finally {
@@ -181,9 +161,9 @@ watch(
           maxlength="255"
           placeholder="Ingresa la clave"
           :disabled="isSubmitting"
-          :class="{ 'is-invalid': v$.norm_key.$error || backendErrors.norm_key?.length }"
-          @blur="v$.norm_key.$touch()" />
-        <FormsInputErrors :errors="v$.norm_key.$errors" />
+          :class="[validator.getClassName('norm_key'), { 'is-invalid': backendErrors.norm_key?.length }]"
+          @blur="validator.touchElement('norm_key')" />
+        <FormsInputErrors :errors="validator.getErrors('norm_key')" />
         <div v-for="message in backendErrors.norm_key" :key="message" class="invalid-feedback d-block">
           {{ message }}
         </div>
@@ -196,9 +176,9 @@ watch(
           maxlength="255"
           placeholder="Ingresa el complemento 1"
           :disabled="isSubmitting"
-          :class="{ 'is-invalid': v$.complement_1.$error || backendErrors.complement_1?.length }"
-          @blur="v$.complement_1.$touch()" />
-        <FormsInputErrors :errors="v$.complement_1.$errors" />
+          :class="[validator.getClassName('complement_1'), { 'is-invalid': backendErrors.complement_1?.length }]"
+          @blur="validator.touchElement('complement_1')" />
+        <FormsInputErrors :errors="validator.getErrors('complement_1')" />
         <div v-for="message in backendErrors.complement_1" :key="message" class="invalid-feedback d-block">
           {{ message }}
         </div>
@@ -211,9 +191,9 @@ watch(
           maxlength="255"
           placeholder="Ingresa el complemento 2"
           :disabled="isSubmitting"
-          :class="{ 'is-invalid': v$.complement_2.$error || backendErrors.complement_2?.length }"
-          @blur="v$.complement_2.$touch()" />
-        <FormsInputErrors :errors="v$.complement_2.$errors" />
+          :class="[validator.getClassName('complement_2'), { 'is-invalid': backendErrors.complement_2?.length }]"
+          @blur="validator.touchElement('complement_2')" />
+        <FormsInputErrors :errors="validator.getErrors('complement_2')" />
         <div v-for="message in backendErrors.complement_2" :key="message" class="invalid-feedback d-block">
           {{ message }}
         </div>
@@ -226,24 +206,10 @@ watch(
           maxlength="255"
           placeholder="Ingresa el complemento 3"
           :disabled="isSubmitting"
-          :class="{ 'is-invalid': v$.complement_3.$error || backendErrors.complement_3?.length }"
-          @blur="v$.complement_3.$touch()" />
-        <FormsInputErrors :errors="v$.complement_3.$errors" />
+          :class="[validator.getClassName('complement_3'), { 'is-invalid': backendErrors.complement_3?.length }]"
+          @blur="validator.touchElement('complement_3')" />
+        <FormsInputErrors :errors="validator.getErrors('complement_3')" />
         <div v-for="message in backendErrors.complement_3" :key="message" class="invalid-feedback d-block">
-          {{ message }}
-        </div>
-      </BFormGroup>
-
-      <BFormGroup class="mb-3" label="Estatus" label-for="standard-status">
-        <BFormSelect
-          id="standard-status"
-          v-model="form.status_id"
-          :options="statusOptions"
-          :disabled="isSubmitting"
-          :class="{ 'is-invalid': v$.status_id.$error || backendErrors.status_id?.length }"
-          @blur="v$.status_id.$touch()" />
-        <FormsInputErrors :errors="v$.status_id.$errors" />
-        <div v-for="message in backendErrors.status_id" :key="message" class="invalid-feedback d-block">
           {{ message }}
         </div>
       </BFormGroup>
