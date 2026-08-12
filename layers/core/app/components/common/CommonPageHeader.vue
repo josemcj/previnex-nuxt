@@ -1,9 +1,5 @@
 <script setup lang="ts">
-interface BreadcrumbItem {
-  text: string;
-  href?: string;
-  active?: boolean;
-}
+import type { BreadcrumbItem } from '#layers/core/app/types/utils';
 
 withDefaults(
   defineProps<{

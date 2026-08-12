@@ -6,23 +6,19 @@
  *
  * @param {Object} object - The target object to be updated.
  * @param {Object} source - The source object containing the new values.
- * @returns {Object} The updated target object, or an empty object if either `object` or `source` is not provided.
+ * @returns {Object} The updated target object.
  */
-export default function <T extends Record<string, unknown>>(object: T, source: Partial<T>): T | Record<string, never> {
-  if (object && source) {
-    for (const key in source) {
-      if (Object.prototype.hasOwnProperty.call(object, key)) {
-        const typedKey = key as keyof T;
-        const value = source[typedKey];
+export default function <T extends object>(object: T, source: Partial<T>): T {
+  for (const key in source) {
+    if (Object.prototype.hasOwnProperty.call(object, key)) {
+      const typedKey = key as keyof T;
+      const value = source[typedKey];
 
-        if (value !== undefined) {
-          object[typedKey] = value;
-        }
+      if (value !== undefined) {
+        object[typedKey] = value;
       }
     }
-
-    return object;
   }
 
-  return {};
+  return object;
 }

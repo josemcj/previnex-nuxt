@@ -1,16 +1,11 @@
 import type { TableFieldRaw } from 'bootstrap-vue-next';
 import type { Ref } from 'vue';
 import type { ApiMethod } from '~~/layers/shared/app/types/paginatedTable';
+import type { TableRow } from '~~/layers/shared/app/types/table';
 
-export function usePaginatedTable<T extends Record<string, unknown>>(
+export function usePaginatedTable<T extends TableRow>(
   fields: readonly TableFieldRaw<T>[],
-  apiMethod: ApiMethod<T> = async () => ({
-    status: 200,
-    data: {
-      data: [],
-      total: 0,
-    },
-  }),
+  apiMethod: ApiMethod<T>,
   itemsPerPage: number = 10,
 ) {
   const tableFields: readonly TableFieldRaw<T>[] = fields;
@@ -25,13 +20,16 @@ export function usePaginatedTable<T extends Record<string, unknown>>(
     isBusy.value = true;
 
     try {
-      const response = await apiMethod(currentPage.value, perPage.value, search.value);
+      const response = await apiMethod({
+        page: currentPage.value,
+        per_page: perPage.value,
+        search: search.value || undefined,
+      });
 
-      if (response?.status === 200) {
-        const { data } = response;
-        tableItems.value = data.data ?? [];
-        totalRows.value = data.total ?? 0;
-      }
+      tableItems.value = response.data ?? [];
+      totalRows.value = response.total ?? 0;
+      currentPage.value = response.current_page ?? currentPage.value;
+      perPage.value = response.per_page ?? perPage.value;
     } finally {
       isBusy.value = false;
     }

@@ -15,7 +15,7 @@ export const horizontalMenuItems: HorizontalMenuItem[] = [
       {
         id: 21,
         label: 'Normas',
-        link: '#',
+        link: '/catalogs/standards',
         parentId: 2,
       },
     ],
