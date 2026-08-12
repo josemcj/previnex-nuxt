@@ -30,12 +30,65 @@ const fields = [
   { key: 'actions', label: 'Acciones' },
 ] satisfies readonly TableFieldRaw<Standard>[];
 
-const { getStandards } = useStandardsApi();
+const { getStandards, changeStandardStatus } = useStandardsApi();
+const swal = useSwal();
+
+const showModal = ref(false);
+const modalMode = ref<'create' | 'edit'>('create');
+const selectedStandard = ref<Standard | null>(null);
 
 const { tableItems, isBusy, currentPage, perPage, totalRows, fetchData, onSearch, onTableChange } =
   usePaginatedTable<Standard>(fields, getStandards);
 
 await fetchData();
+
+function onAddStandard() {
+  modalMode.value = 'create';
+  selectedStandard.value = null;
+  showModal.value = true;
+}
+
+function onUpdateStandard(standard: Standard) {
+  modalMode.value = 'edit';
+  selectedStandard.value = standard;
+  showModal.value = true;
+}
+
+async function onStandardSaved(message: string) {
+  await swal.success(message);
+  await fetchData();
+}
+
+async function onChangeStandardStatus(id: unknown, standard: Standard) {
+  if (typeof id !== 'number') return;
+
+  const isActive = Number(standard.status_id) === 1;
+  const action = isActive ? 'desactivar' : 'activar';
+  const confirmed = await swal.warning({
+    title: `¿Deseas ${action} la norma?`,
+    text: `Se ${action === 'desactivar' ? 'desactivará' : 'activará'} “${standard.name}”.`,
+    confirmButtonText: `Sí, ${action}`,
+  });
+
+  if (!confirmed) return;
+
+  try {
+    const response = await changeStandardStatus(id);
+    await swal.success(response.message);
+    await fetchData();
+  } catch (error: unknown) {
+    let message = `No fue posible ${action} la norma.`;
+
+    if (typeof error === 'object' && error !== null && 'data' in error) {
+      const data = error.data;
+      if (typeof data === 'object' && data !== null && 'message' in data && typeof data.message === 'string') {
+        message = data.message;
+      }
+    }
+
+    await swal.error({ title: 'Error', text: message });
+  }
+}
 </script>
 
 <template>
@@ -50,6 +103,16 @@ await fetchData();
       :per-page="perPage"
       :total-rows="totalRows"
       @search="onSearch"
-      @change="onTableChange" />
+      @change="onTableChange"
+      @add-btn-click="onAddStandard"
+      @update-item="onUpdateStandard"
+      @delete-item="onChangeStandardStatus" />
   </BCard>
+
+  <StandardModal
+    v-model="showModal"
+    :mode="modalMode"
+    :standard="selectedStandard"
+    @saved="onStandardSaved"
+    @hidden="selectedStandard = null" />
 </template>

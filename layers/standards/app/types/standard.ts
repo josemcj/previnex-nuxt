@@ -20,3 +20,18 @@ export interface Standard {
   updated_at: string;
   trackings: unknown[];
 }
+
+export interface StandardPayload {
+  norm_key: string;
+  complement_1: string;
+  complement_2: string | null;
+  complement_3: string | null;
+  status_id: number;
+}
+
+export interface StandardApiResponse {
+  status: boolean;
+  code: number;
+  message: string;
+  data: Standard;
+}
