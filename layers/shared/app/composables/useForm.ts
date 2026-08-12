@@ -90,7 +90,17 @@ export function useForm() {
     return cleanObject;
   }
 
-  function resetReactive<T extends Record<string, any>>(object: T): void {
+  function resetReactive<T extends Record<string, any>>(object: T, initialValues?: Partial<T>): void {
+    if (initialValues) {
+      for (const key in object) {
+        if (Object.prototype.hasOwnProperty.call(object, key) && key in initialValues) {
+          object[key] = initialValues[key] as T[Extract<keyof T, string>];
+        }
+      }
+
+      return;
+    }
+
     for (const key in object) {
       if (Object.prototype.hasOwnProperty.call(object, key)) {
         const value = object[key];

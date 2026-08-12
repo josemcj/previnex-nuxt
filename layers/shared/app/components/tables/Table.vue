@@ -1,6 +1,6 @@
 <script setup lang="ts" generic="T extends TableRow">
 import type { TableFieldRaw } from 'bootstrap-vue-next';
-import type { TableRow, TableStatusValue } from '~~/layers/shared/app/types/table';
+import type { TableRow } from '~~/layers/shared/app/types/table';
 
 const props = withDefaults(
   defineProps<{
@@ -11,6 +11,7 @@ const props = withDefaults(
     perPage?: number;
     totalRows: number;
     showAddBtn?: boolean;
+    showUploadLayoutBtn?: boolean;
     perPageOptions?: readonly number[];
     showEditBtn?: boolean;
     showDeleteBtn?: boolean;
@@ -21,6 +22,7 @@ const props = withDefaults(
   {
     perPage: 10,
     showAddBtn: true,
+    showUploadLayoutBtn: true,
     perPageOptions: () => [10, 25, 50, 100],
     showEditBtn: true,
     showDeleteBtn: true,
@@ -33,6 +35,7 @@ const props = withDefaults(
 const emit = defineEmits<{
   search: [value: string];
   addBtnClick: [];
+  uploadLayoutBtnClick: [];
   change: [currentPage: number, perPage: number];
   updateItem: [item: T];
   deleteItem: [id: unknown, item: T];
@@ -71,36 +74,74 @@ function handlePerPageChange(value: number) {
   emit('change', page.value, pageSize.value);
 }
 
-function statusId(item: TableRow): TableStatusValue | undefined {
-  if (typeof item.status === 'object') {
-    return item.status?.id;
+function releaseFocus(event: MouseEvent) {
+  if (event.currentTarget instanceof HTMLElement) {
+    event.currentTarget.blur();
   }
+}
 
-  return item.status ?? item.status_id;
+function handleUpdateItem(event: MouseEvent, item: T) {
+  releaseFocus(event);
+  emit('updateItem', item);
+}
+
+function handleAddItem(event: MouseEvent) {
+  releaseFocus(event);
+  emit('addBtnClick');
+}
+
+function handleUploadLayout(event: MouseEvent) {
+  releaseFocus(event);
+  emit('uploadLayoutBtnClick');
+}
+
+function handleDeleteItem(event: MouseEvent, item: T) {
+  releaseFocus(event);
+  emit('deleteItem', item.id, item);
+}
+
+function statusId(item: TableRow): number | undefined {
+  const value = typeof item.status === 'object' ? item.status?.id : (item.status ?? item.status_id);
+
+  if (value === undefined || value === null || value === '') return undefined;
+
+  const parsedValue = Number(value);
+  return Number.isFinite(parsedValue) ? parsedValue : undefined;
 }
 </script>
 
 <template>
-  <BRow>
-    <BCol md="6">
-      <div v-if="showAddBtn" class="mb-3">
-        <BLink v-if="addBtnHref" :to="addBtnHref" class="btn btn-primary">
-          <i class="mdi mdi-plus" />
+  <div class="table-toolbar d-flex flex-column flex-lg-row align-items-lg-center gap-3 mb-3">
+    <div v-if="showAddBtn || showUploadLayoutBtn" class="d-flex align-items-center gap-2">
+      <template v-if="showAddBtn">
+        <BLink v-if="addBtnHref" :to="addBtnHref" class="btn btn-primary text-nowrap">
+          <i class="bx bx-plus align-middle" />
           Agregar {{ addBtnText }}
         </BLink>
 
-        <BButton v-else variant="primary" @click="emit('addBtnClick')">
-          <i class="mdi mdi-plus" />
+        <BButton v-else variant="primary" class="text-nowrap" @click="handleAddItem">
+          <i class="bx bx-plus align-middle" />
           Agregar {{ addBtnText }}
         </BButton>
-      </div>
-    </BCol>
-  </BRow>
+      </template>
 
-  <BRow>
-    <TablesPerPageSelect :options="perPageOptions" :option-selected="pageSize" @change="handlePerPageChange" />
-    <TablesSearch @search="handleSearch" />
-  </BRow>
+      <BButton
+        v-if="showUploadLayoutBtn"
+        v-b-tooltip.hover
+        variant="link"
+        class="btn-icon btn-soft-primary"
+        title="Subir layout"
+        aria-label="Subir layout"
+        @click="handleUploadLayout">
+        <i class="bx bx-cloud-upload" aria-hidden="true" />
+      </BButton>
+    </div>
+
+    <div class="table-controls d-flex flex-column flex-sm-row align-items-sm-center gap-3 ms-lg-auto">
+      <TablesSearch @search="handleSearch" />
+      <TablesPerPageSelect :options="perPageOptions" :option-selected="pageSize" @change="handlePerPageChange" />
+    </div>
+  </div>
 
   <div class="table-responsive">
     <BTable :busy="isBusy" :items="items" :fields="fields" responsive="sm" striped hover>
@@ -117,32 +158,46 @@ function statusId(item: TableRow): TableStatusValue | undefined {
       </template>
 
       <template #cell(actions)="data">
-        <ul class="list-inline mb-0">
-          <li v-if="showEditBtn" class="list-inline-item">
-            <BButton
-              v-b-tooltip.hover
-              class="px-2 text-primary"
-              variant="link"
-              title="Editar"
-              @click="emit('updateItem', data.item)">
-              <i class="uil uil-edit font-size-20" />
-            </BButton>
-          </li>
+        <div class="d-inline-flex align-items-center gap-2" role="group" aria-label="Acciones del registro">
+          <BButton
+            v-if="showEditBtn && statusId(data.item) != 2"
+            v-b-tooltip.hover
+            class="btn-icon btn-soft-primary"
+            variant="link"
+            title="Editar"
+            aria-label="Editar"
+            @click="handleUpdateItem($event, data.item)">
+            <i class="bx bx-edit-alt" aria-hidden="true" />
+          </BButton>
 
-          <li v-if="showDeleteBtn && statusId(data.item) != null" class="list-inline-item">
-            <BButton
-              v-b-tooltip.hover
-              class="px-2 text-primary"
-              variant="link"
-              :title="Number(statusId(data.item)) === 1 ? 'Eliminar' : 'Activar'"
-              @click="emit('deleteItem', data.item.id, data.item)">
-              <TablesStatusIcon :status="statusId(data.item) ?? 0" />
-            </BButton>
-          </li>
-        </ul>
+          <BButton
+            v-if="showDeleteBtn && statusId(data.item) != null"
+            v-b-tooltip.hover
+            class="btn-icon"
+            :class="statusId(data.item) === 1 ? 'btn-soft-danger' : 'btn-soft-success'"
+            variant="link"
+            :title="statusId(data.item) === 1 ? 'Eliminar' : 'Activar'"
+            :aria-label="statusId(data.item) === 1 ? 'Eliminar' : 'Activar'"
+            @click="handleDeleteItem($event, data.item)">
+            <TablesStatusIcon :status="statusId(data.item) ?? 0" aria-hidden="true" />
+          </BButton>
+        </div>
       </template>
     </BTable>
   </div>
 
   <TablesPagination :current-page="page" :total-rows="totalRows" :per-page="pageSize" @change="handlePageChange" />
 </template>
+
+<style scoped>
+.table-controls {
+  width: 100%;
+}
+
+@media (min-width: 992px) {
+  .table-controls {
+    width: auto;
+  }
+}
+
+</style>

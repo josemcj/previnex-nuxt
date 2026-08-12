@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { ErrorObject } from '@vuelidate/core';
+import type { ValidationError } from '~~/layers/shared/app/types/validationError';
 
 defineProps<{
-  errors: readonly ErrorObject[];
+  errors: readonly ValidationError[];
 }>();
 </script>
 
