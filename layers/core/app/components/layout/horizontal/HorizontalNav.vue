@@ -38,7 +38,26 @@ function getFilteredSubItems(item: HorizontalMenuItem): HorizontalMenuItem[] {
     return subItems;
   }
 
-  return subItems.filter((subItem) => normalizeText(subItem.label).includes(searchTerm));
+  return subItems
+    .map((subItem) => {
+      if (!hasChildren(subItem)) {
+        return normalizeText(subItem.label).includes(searchTerm) ? subItem : null;
+      }
+
+      const filteredNestedSubItems = (subItem.subItems ?? []).filter((nestedSubItem) => {
+        return normalizeText(nestedSubItem.label).includes(searchTerm);
+      });
+
+      if (normalizeText(subItem.label).includes(searchTerm) || filteredNestedSubItems.length) {
+        return {
+          ...subItem,
+          subItems: filteredNestedSubItems,
+        };
+      }
+
+      return null;
+    })
+    .filter((subItem): subItem is HorizontalMenuItem => subItem !== null);
 }
 
 function isItemActive(item: HorizontalMenuItem): boolean {
@@ -124,15 +143,35 @@ watch(
                     @click.stop />
                 </div>
 
-                <NuxtLink
-                  v-for="subItem in getFilteredSubItems(item)"
-                  :key="subItem.id"
-                  :to="subItem.link || '/'"
-                  class="dropdown-item"
-                  :class="{ active: isItemActive(subItem) }"
-                  @click="closeNavigation">
-                  {{ subItem.label }}
-                </NuxtLink>
+                <template v-for="subItem in getFilteredSubItems(item)" :key="subItem.id">
+                  <template v-if="hasChildren(subItem)">
+                    <div class="previnex-topnav-section-title">
+                      <i v-if="subItem.icon" :class="['bx', subItem.icon, 'me-2']" />
+                      {{ subItem.label }}
+                    </div>
+
+                    <NuxtLink
+                      v-for="nestedSubItem in subItem.subItems"
+                      :key="nestedSubItem.id"
+                      :to="nestedSubItem.link || '/'"
+                      class="dropdown-item previnex-topnav-section-item"
+                      :class="{ active: isItemActive(nestedSubItem) }"
+                      @click="closeNavigation">
+                      <i v-if="nestedSubItem.icon" :class="['bx', nestedSubItem.icon, 'me-2']" />
+                      {{ nestedSubItem.label }}
+                    </NuxtLink>
+                  </template>
+
+                  <NuxtLink
+                    v-else
+                    :to="subItem.link || '/'"
+                    class="dropdown-item previnex-topnav-section-item"
+                    :class="{ active: isItemActive(subItem) }"
+                    @click="closeNavigation">
+                    <i v-if="subItem.icon" :class="['bx', subItem.icon, 'me-2']" />
+                    {{ subItem.label }}
+                  </NuxtLink>
+                </template>
 
                 <div v-if="!getFilteredSubItems(item).length" class="previnex-topnav-empty">
                   No se encontraron resultados
