@@ -71,12 +71,12 @@ function handlePerPageChange(value: number) {
   emit('change', page.value, pageSize.value);
 }
 
-function statusId(item: TableRow): TableStatusValue | undefined {
+function statusId(item: TableRow): number {
   if (typeof item.status === 'object') {
-    return item.status?.id;
+    return Number(item.status?.id);
   }
 
-  return item.status ?? item.status_id;
+  return Number(item.status_id);
 }
 </script>
 
@@ -117,7 +117,7 @@ function statusId(item: TableRow): TableStatusValue | undefined {
       <template #cell(actions)="data">
         <div class="d-inline-flex align-items-center gap-2" role="group" aria-label="Acciones del registro">
           <BButton
-            v-if="showEditBtn"
+            v-if="showEditBtn && statusId(data.item) != 2"
             v-b-tooltip.hover
             class="action-button action-button--edit p-1"
             variant="link"
@@ -131,10 +131,10 @@ function statusId(item: TableRow): TableStatusValue | undefined {
             v-if="showDeleteBtn && statusId(data.item) != null"
             v-b-tooltip.hover
             class="action-button p-1"
-            :class="Number(statusId(data.item)) === 1 ? 'action-button--delete' : 'action-button--activate'"
+            :class="statusId(data.item) === 1 ? 'action-button--delete' : 'action-button--activate'"
             variant="link"
-            :title="Number(statusId(data.item)) === 1 ? 'Eliminar' : 'Activar'"
-            :aria-label="Number(statusId(data.item)) === 1 ? 'Eliminar' : 'Activar'"
+            :title="statusId(data.item) === 1 ? 'Eliminar' : 'Activar'"
+            :aria-label="statusId(data.item) === 1 ? 'Eliminar' : 'Activar'"
             @click="emit('deleteItem', data.item.id, data.item)">
             <TablesStatusIcon :status="statusId(data.item) ?? 0" aria-hidden="true" />
           </BButton>
