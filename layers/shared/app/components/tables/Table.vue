@@ -71,6 +71,27 @@ function handlePerPageChange(value: number) {
   emit('change', page.value, pageSize.value);
 }
 
+function releaseFocus(event: MouseEvent) {
+  if (event.currentTarget instanceof HTMLElement) {
+    event.currentTarget.blur();
+  }
+}
+
+function handleUpdateItem(event: MouseEvent, item: T) {
+  releaseFocus(event);
+  emit('updateItem', item);
+}
+
+function handleAddItem(event: MouseEvent) {
+  releaseFocus(event);
+  emit('addBtnClick');
+}
+
+function handleDeleteItem(event: MouseEvent, item: T) {
+  releaseFocus(event);
+  emit('deleteItem', item.id, item);
+}
+
 function statusId(item: TableRow): number | undefined {
   const value = typeof item.status === 'object' ? item.status?.id : (item.status ?? item.status_id);
 
@@ -89,7 +110,7 @@ function statusId(item: TableRow): number | undefined {
         Agregar {{ addBtnText }}
       </BLink>
 
-      <BButton v-else variant="primary" class="text-nowrap" @click="emit('addBtnClick')">
+      <BButton v-else variant="primary" class="text-nowrap" @click="handleAddItem">
         <i class="bx bx-plus align-middle" />
         Agregar {{ addBtnText }}
       </BButton>
@@ -124,7 +145,7 @@ function statusId(item: TableRow): number | undefined {
             variant="link"
             title="Editar"
             aria-label="Editar"
-            @click="emit('updateItem', data.item)">
+            @click="handleUpdateItem($event, data.item)">
             <i class="bx bx-edit-alt font-size-20" aria-hidden="true" />
           </BButton>
 
@@ -136,7 +157,7 @@ function statusId(item: TableRow): number | undefined {
             variant="link"
             :title="statusId(data.item) === 1 ? 'Eliminar' : 'Activar'"
             :aria-label="statusId(data.item) === 1 ? 'Eliminar' : 'Activar'"
-            @click="emit('deleteItem', data.item.id, data.item)">
+            @click="handleDeleteItem($event, data.item)">
             <TablesStatusIcon :status="statusId(data.item) ?? 0" aria-hidden="true" />
           </BButton>
         </div>

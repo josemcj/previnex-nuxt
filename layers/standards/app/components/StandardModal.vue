@@ -35,6 +35,7 @@ const formHelper = useForm();
 const isSubmitting = ref(false);
 const formMessage = ref('');
 const backendErrors = ref<Record<string, string[]>>({});
+const savedMessage = ref<string | null>(null);
 
 const form = reactive<StandardForm>({ ...initialForm });
 
@@ -109,8 +110,8 @@ async function onSubmit() {
         ? await updateStandard(props.standard.id, payload)
         : await createStandard(payload);
 
+    savedMessage.value = response.message;
     showModal.value = false;
-    emit('saved', response.message);
   } catch (error: unknown) {
     const data = getApiErrorData(error);
     formMessage.value = data.message ?? 'No fue posible guardar la norma.';
@@ -121,8 +122,14 @@ async function onSubmit() {
 }
 
 function onHidden() {
+  const message = savedMessage.value;
+  savedMessage.value = null;
   resetForm();
   emit('hidden');
+
+  if (message) {
+    emit('saved', message);
+  }
 }
 
 watch(
