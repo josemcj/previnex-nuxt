@@ -1,6 +1,6 @@
 <template>
   <div class="previnex-auth-shell">
-    <div class="account-pages my-5 pt-5 previnex-auth-stage">
+    <div class="account-pages pt-5 previnex-auth-stage">
       <BContainer>
         <slot />
       </BContainer>
