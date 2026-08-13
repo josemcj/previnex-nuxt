@@ -18,7 +18,7 @@ export const horizontalMenuItems: HorizontalMenuItem[] = [
         icon: 'bx-shield-quarter',
         parentId: 2,
         subItems: [
-          { id: 211, label: 'Normas', link: '#', icon: 'bx-receipt', parentId: 21 },
+          { id: 211, label: 'Normas', link: '/catalogs/standards', icon: 'bx-receipt', parentId: 21 },
           { id: 212, label: 'Documentos Requeridos', link: '#', icon: 'bx-file', parentId: 21 },
           { id: 213, label: '69b', link: '#', icon: 'bx-file-find', parentId: 21 },
           { id: 214, label: 'Tipos de documentos', link: '#', icon: 'bx-copy-alt', parentId: 21 },
@@ -132,9 +132,7 @@ export const horizontalMenuItems: HorizontalMenuItem[] = [
         label: 'Gestion',
         icon: 'bx-briefcase-alt-2',
         parentId: 5,
-        subItems: [
-          { id: 521, label: 'Relacion de guias', link: '#', icon: 'bx-receipt', parentId: 52 },
-        ],
+        subItems: [{ id: 521, label: 'Relacion de guias', link: '#', icon: 'bx-receipt', parentId: 52 }],
       },
     ],
   },
@@ -184,9 +182,7 @@ export const horizontalMenuItems: HorizontalMenuItem[] = [
         label: 'Catalogo general',
         icon: 'bx-cog',
         parentId: 7,
-        subItems: [
-          { id: 731, label: 'Dominios', link: '#', icon: 'bx-globe', parentId: 73 },
-        ],
+        subItems: [{ id: 731, label: 'Dominios', link: '#', icon: 'bx-globe', parentId: 73 }],
       },
     ],
   },
