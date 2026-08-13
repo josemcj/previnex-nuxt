@@ -10,7 +10,6 @@ const emit = defineEmits<{
   close: [];
 }>();
 
-
 const route = useRoute();
 const expandedMenuId = ref<number | null>(null);
 const menuSearchTerms = reactive<Record<number, string>>({});
@@ -20,16 +19,6 @@ let hoverMediaQuery: MediaQueryList | null = null;
 function updateHoverSupport(event?: MediaQueryListEvent) {
   supportsHover.value = event?.matches ?? hoverMediaQuery?.matches ?? false;
 }
-
-onMounted(() => {
-  hoverMediaQuery = window.matchMedia('(hover: hover) and (pointer: fine)');
-  updateHoverSupport();
-  hoverMediaQuery.addEventListener('change', updateHoverSupport);
-});
-
-onBeforeUnmount(() => {
-  hoverMediaQuery?.removeEventListener('change', updateHoverSupport);
-});
 
 function hasChildren(item: HorizontalMenuItem): boolean {
   return Boolean(item.subItems?.length);
@@ -122,6 +111,16 @@ watch(
     closeNavigation();
   },
 );
+
+onMounted(() => {
+  hoverMediaQuery = window.matchMedia('(hover: hover) and (pointer: fine)');
+  updateHoverSupport();
+  hoverMediaQuery.addEventListener('change', updateHoverSupport);
+});
+
+onBeforeUnmount(() => {
+  hoverMediaQuery?.removeEventListener('change', updateHoverSupport);
+});
 </script>
 
 <template>
