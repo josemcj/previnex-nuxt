@@ -186,7 +186,13 @@ function statusId(item: TableRow): number | undefined {
     </BTable>
   </div>
 
-  <TablesPagination :current-page="page" :total-rows="totalRows" :per-page="pageSize" @change="handlePageChange" />
+  <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-lg-between gap-2 mt-3">
+    <p class="m-0 text-secondary table-pagination-info" v-if="totalRows > 0">
+      Mostrando {{ (page - 1) * pageSize + 1 }} a {{ Math.min(page * pageSize, totalRows) }} de
+      {{ totalRows }} resultados
+    </p>
+    <TablesPagination :current-page="page" :total-rows="totalRows" :per-page="pageSize" @change="handlePageChange" />
+  </div>
 </template>
 
 <style scoped>
@@ -194,10 +200,19 @@ function statusId(item: TableRow): number | undefined {
   width: 100%;
 }
 
+.table-pagination-info {
+  text-align: center;
+  padding-bottom: 1rem;
+}
+
 @media (min-width: 992px) {
   .table-controls {
     width: auto;
   }
-}
 
+  .table-pagination-info {
+    text-align: left;
+    padding-bottom: 0;
+  }
+}
 </style>
