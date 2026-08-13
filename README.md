@@ -1,4 +1,4 @@
-# Nuxt Base App
+# Previnex App
 
 Plantilla base construida con Nuxt 4, Vue 3, TypeScript, Pinia y BootstrapVueNext. Incluye layouts vertical y horizontal, autenticación, validación de formularios, tablas paginadas, notificaciones y una instancia centralizada de `$fetch` para consumir una API.
 
@@ -15,8 +15,8 @@ Antes de comenzar, asegúrate de tener instalados:
 Clona el repositorio y entra al directorio del proyecto:
 
 ```bash
-git clone https://github.com/josemcj/nuxt-base-app.git
-cd nuxt-base-app
+git clone git@github.com:josemcj/previnex-nuxt.git
+cd previnex-nuxt
 ```
 
 Instala las dependencias:
