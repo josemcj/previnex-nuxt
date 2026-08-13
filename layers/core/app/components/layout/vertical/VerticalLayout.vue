@@ -4,9 +4,6 @@ const route = useRoute();
 
 const { width: layoutWidth, leftSidebarType, topbar } = appConfig.layout;
 
-const layoutStore = useLayoutStore();
-const { loader } = storeToRefs(layoutStore);
-
 const sidebarEnabled = ref(false);
 const menuCondensed = ref(false);
 
@@ -62,14 +59,6 @@ watch(
 
 <template>
   <div>
-    <div v-if="loader" id="preloader">
-      <div id="status">
-        <div class="spinner-chase">
-          <div v-for="index in 6" :key="index" class="chase-dot" />
-        </div>
-      </div>
-    </div>
-
     <div id="layout-wrapper">
       <LayoutVerticalHeader @toggle-menu="toggleMenu" />
       <LayoutVerticalSidebar />
