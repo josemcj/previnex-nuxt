@@ -3,9 +3,6 @@ const appConfig = useAppConfig();
 
 const { width: layoutWidth, topbar } = appConfig.layout;
 
-const layoutStore = useLayoutStore();
-const { loader } = storeToRefs(layoutStore);
-
 const menuOpen = ref(false);
 
 useHead(() => ({
@@ -23,14 +20,6 @@ function toggleMenu() {
 
 <template>
   <div>
-    <div v-if="loader" id="preloader">
-      <div id="status">
-        <div class="spinner-chase">
-          <div v-for="index in 6" :key="index" class="chase-dot" />
-        </div>
-      </div>
-    </div>
-
     <div id="layout-wrapper">
       <LayoutHorizontalHeader :menu-open="menuOpen" @toggle-menu="toggleMenu" />
       <LayoutHorizontalNav :open="menuOpen" @close="menuOpen = false" />
