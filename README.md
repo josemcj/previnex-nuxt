@@ -39,44 +39,6 @@ NUXT_PUBLIC_API_BASE=http://localhost:8000/api
 
 La instancia `$api`, definida en `app/plugins/api.ts`, utiliza esta URL para las peticiones y agrega automáticamente el token de autenticación cuando está disponible.
 
-## Configuración de la aplicación
-
-Las opciones globales de apariencia y funcionalidades se encuentran en `app/app.config.ts`:
-
-```ts
-export default defineAppConfig({
-  title: 'Skote theme',
-  description: 'Skote theme App.',
-
-  layout: {
-    type: 'horizontal' as 'horizontal' | 'vertical',
-    width: 'fluid' as 'fluid' | 'boxed' | 'scrollable',
-    leftSidebarType: 'dark' as 'dark' | 'light' | 'compact' | 'icon' | 'colored',
-    topbar: 'dark' as 'dark' | 'light' | 'colored',
-  },
-
-  features: {
-    notifications: false,
-    toggleFullScreen: false,
-  },
-});
-```
-
-### Opciones disponibles
-
-| Propiedad                   | Valores                                       | Descripción                                                   |
-| --------------------------- | --------------------------------------------- | ------------------------------------------------------------- |
-| `title`                     | Texto                                         | Nombre mostrado por la aplicación.                            |
-| `description`               | Texto                                         | Descripción general del proyecto.                             |
-| `layout.type`               | `horizontal`, `vertical`                      | Define la navegación principal.                               |
-| `layout.width`              | `fluid`, `boxed`, `scrollable`                | Define el ancho y comportamiento del contenido.               |
-| `layout.leftSidebarType`    | `dark`, `light`, `compact`, `icon`, `colored` | Define la apariencia de la barra lateral del layout vertical. |
-| `layout.topbar`             | `dark`, `light`, `colored`                    | Define la apariencia de la barra superior.                    |
-| `features.notifications`    | `true`, `false`                               | Muestra u oculta el menú de notificaciones.                   |
-| `features.toggleFullScreen` | `true`, `false`                               | Muestra u oculta el control de pantalla completa.             |
-
-Estas opciones son definidas por el desarrollador y no forman parte del estado modificable por el usuario.
-
 ## Desarrollo
 
 Inicia el servidor de desarrollo:
