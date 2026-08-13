@@ -14,6 +14,22 @@ const emit = defineEmits<{
 const route = useRoute();
 const expandedMenuId = ref<number | null>(null);
 const menuSearchTerms = reactive<Record<number, string>>({});
+const supportsHover = ref(false);
+let hoverMediaQuery: MediaQueryList | null = null;
+
+function updateHoverSupport(event?: MediaQueryListEvent) {
+  supportsHover.value = event?.matches ?? hoverMediaQuery?.matches ?? false;
+}
+
+onMounted(() => {
+  hoverMediaQuery = window.matchMedia('(hover: hover) and (pointer: fine)');
+  updateHoverSupport();
+  hoverMediaQuery.addEventListener('change', updateHoverSupport);
+});
+
+onBeforeUnmount(() => {
+  hoverMediaQuery?.removeEventListener('change', updateHoverSupport);
+});
 
 function hasChildren(item: HorizontalMenuItem): boolean {
   return Boolean(item.subItems?.length);
@@ -73,6 +89,25 @@ function toggleSubmenu(item: HorizontalMenuItem) {
   expandedMenuId.value = expandedMenuId.value === item.id ? null : item.id;
 }
 
+function handleSubmenuClick(item: HorizontalMenuItem, event: MouseEvent) {
+  // Touch devices use clicks. Keyboard-generated clicks remain available on desktop.
+  if (!supportsHover.value || event.detail === 0) {
+    toggleSubmenu(item);
+  }
+}
+
+function openSubmenuOnHover(item: HorizontalMenuItem) {
+  if (supportsHover.value && hasChildren(item)) {
+    expandedMenuId.value = item.id;
+  }
+}
+
+function closeSubmenuOnHover(item: HorizontalMenuItem) {
+  if (supportsHover.value && expandedMenuId.value === item.id) {
+    expandedMenuId.value = null;
+  }
+}
+
 function closeNavigation() {
   expandedMenuId.value = null;
   Object.keys(menuSearchTerms).forEach((key) => {
@@ -102,14 +137,16 @@ watch(
               :class="{
                 dropdown: hasChildren(item),
                 active: isItemActive(item),
-              }">
+              }"
+              @mouseenter="openSubmenuOnHover(item)"
+              @mouseleave="closeSubmenuOnHover(item)">
               <button
                 v-if="hasChildren(item)"
                 type="button"
                 class="nav-link dropdown-toggle arrow-none"
                 :class="{ active: isItemActive(item) }"
                 :aria-expanded="expandedMenuId === item.id"
-                @click="toggleSubmenu(item)">
+                @click="handleSubmenuClick(item, $event)">
                 <i v-if="item.icon" :class="['bx', item.icon, 'me-2']" />
 
                 {{ item.label }}
