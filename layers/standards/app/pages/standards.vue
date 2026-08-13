@@ -33,6 +33,7 @@ const fields = [
 
 const { getStandards, changeStandardStatus } = useStandardsApi();
 const swal = useSwal();
+const layoutStore = useLayoutStore();
 
 const showModal = ref(false);
 const modalMode = ref<ModalMode>('create');
@@ -73,15 +74,25 @@ async function onChangeStandardStatus(id: unknown, standard: Standard) {
 
   if (!confirmed) return;
 
+  layoutStore.changeLoaderValue(true);
+  let successMessage: string | null = null;
+  let errorMessage: string | null = null;
+
   try {
     const response = await changeStandardStatus(id);
-    await swal.success(response.message);
     await fetchData();
+    successMessage = response.message;
   } catch (error: unknown) {
     const data = getApiErrorData(error);
-    const message = data.message ?? `No fue posible ${action} la norma.`;
+    errorMessage = data.message ?? `No fue posible ${action} la norma.`;
+  } finally {
+    layoutStore.changeLoaderValue(false);
+  }
 
-    await swal.error({ title: 'Error', text: message });
+  if (errorMessage) {
+    await swal.error({ title: 'Error', text: errorMessage });
+  } else if (successMessage) {
+    await swal.success(successMessage);
   }
 }
 </script>
