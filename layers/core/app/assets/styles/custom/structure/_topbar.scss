@@ -49,6 +49,19 @@
     }
 }
 
+.horizontal-navbar-brand-box .logo {
+    > span {
+        width: 100%;
+        height: 100%;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .logo-lg {
+        display: flex;
+    }
+}
+
 .logo-light {
     display: none;
 }
@@ -126,6 +139,16 @@
 
         span.logo-sm {
             display: inline-block;
+        }
+    }
+
+    .horizontal-navbar-brand-box .logo {
+        span.logo-lg {
+            display: none;
+        }
+
+        span.logo-sm {
+            display: flex;
         }
     }
 }

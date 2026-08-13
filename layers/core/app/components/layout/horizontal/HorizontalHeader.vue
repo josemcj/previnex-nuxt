@@ -68,7 +68,7 @@ async function logout() {
   <header id="page-topbar">
     <div class="navbar-header">
       <div class="d-flex">
-        <div class="navbar-brand-box">
+        <div class="navbar-brand-box horizontal-navbar-brand-box">
           <NuxtLink to="/" class="logo logo-dark">
             <span class="logo-sm">
               <img :src="logoDark" :alt="appConfig.title" class="previnex-navbar-logo previnex-navbar-logo-sm" />
