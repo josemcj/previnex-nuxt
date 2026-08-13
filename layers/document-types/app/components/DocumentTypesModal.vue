@@ -140,7 +140,7 @@ watch(
     :cancel-disabled="isSubmitting"
     no-close-on-backdrop
     no-close-on-esc
-    ok-title="isSubmitting ? 'Guardando...' : 'Guardar'"
+    :ok-title="isSubmitting ? 'Guardando...' : 'Guardar'"
     cancel-title="Cancelar"
     @ok.prevent="onSubmit"
     @hidden="onHidden">
