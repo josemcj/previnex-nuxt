@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { AppNotification } from '#layers/core/app/types/notifications';
 import avatarImage from '#layers/core/app/assets/images/users/avatar-1.jpg';
-import logo from '#layers/core/app/assets/images/logo.svg';
-import logoLight from '#layers/core/app/assets/images/logo-light.svg';
+import logoDark from '#layers/core/app/assets/images/previnex-logo-navbar.png';
+import logoLight from '#layers/core/app/assets/images/previnex-logo-navbar-light.png';
 
 const emit = defineEmits<{
   toggleMenu: [];
@@ -67,21 +67,21 @@ async function logout() {
         <div class="navbar-brand-box">
           <NuxtLink to="/" class="logo logo-dark">
             <span class="logo-sm">
-              <img :src="logo" :alt="appConfig.title" height="22" />
+              <img :src="logoDark" :alt="appConfig.title" class="previnex-navbar-logo previnex-navbar-logo-sm" />
             </span>
 
             <span class="logo-lg">
-              <img :src="logo" :alt="appConfig.title" height="34" />
+              <img :src="logoDark" :alt="appConfig.title" class="previnex-navbar-logo previnex-navbar-logo-lg" />
             </span>
           </NuxtLink>
 
           <NuxtLink to="/" class="logo logo-light">
             <span class="logo-sm">
-              <img :src="logoLight" :alt="appConfig.title" height="22" />
+              <img :src="logoLight" :alt="appConfig.title" class="previnex-navbar-logo previnex-navbar-logo-sm" />
             </span>
 
             <span class="logo-lg">
-              <img :src="logoLight" :alt="appConfig.title" height="34" />
+              <img :src="logoLight" :alt="appConfig.title" class="previnex-navbar-logo previnex-navbar-logo-lg" />
             </span>
           </NuxtLink>
         </div>

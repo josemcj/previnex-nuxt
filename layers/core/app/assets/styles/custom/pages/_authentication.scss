@@ -87,3 +87,226 @@
         }
     }
 }
+
+.previnex-auth-shell {
+    min-height: 100vh;
+    background: linear-gradient(180deg, $previnex-brand 0%, $previnex-brand-mid 100%);
+}
+
+.previnex-auth-stage {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+}
+
+.previnex-login-row {
+    min-height: calc(100vh - 8rem);
+    align-items: center;
+}
+
+.previnex-login-card {
+    display: grid;
+    grid-template-columns: 0.95fr 1.05fr;
+    background: $white;
+    border-radius: 1.5rem;
+    overflow: hidden;
+    box-shadow: 0 24px 60px rgba($previnex-brand-darker, 0.28);
+}
+
+.previnex-login-brand-panel {
+    background: $previnex-brand-dark;
+    color: $white;
+    padding: 3rem 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 620px;
+}
+
+.previnex-login-device {
+    position: relative;
+    margin-bottom: 2.5rem;
+}
+
+.previnex-login-phone {
+    position: relative;
+    width: 180px;
+}
+
+.previnex-login-phone-screen {
+    width: 124px;
+    height: 216px;
+    margin: 0 auto;
+    border-radius: 1.35rem;
+    background: $white;
+    border: 5px solid $previnex-brand;
+    box-shadow: 0 0 20px rgba($previnex-brand, 0.45);
+    transform: rotate(1deg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.previnex-login-phone-logo {
+    width: 100%;
+    height: auto;
+}
+
+.previnex-login-chip {
+    position: absolute;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    background: mix($previnex-brand-dark, $black, 92%);
+    color: $white;
+    border-radius: 999px;
+    padding: 0.35rem 0.6rem;
+    font-size: 0.68rem;
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.28);
+    white-space: nowrap;
+}
+
+.previnex-login-chip i {
+    color: $previnex-brand;
+}
+
+.previnex-login-chip--top {
+    top: 2.2rem;
+    right: -1.5rem;
+}
+
+.previnex-login-chip--bottom {
+    bottom: 0.6rem;
+    left: -1.7rem;
+}
+
+.previnex-login-brand-copy {
+    max-width: 300px;
+    text-align: center;
+}
+
+.previnex-login-brand-copy h3 {
+    color: $white;
+    margin-bottom: 0.6rem;
+    font-weight: 700;
+}
+
+.previnex-login-brand-copy p {
+    color: rgba($white, 0.8);
+    margin-bottom: 0;
+}
+
+.previnex-login-form-panel {
+    padding: 2.5rem 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 620px;
+}
+
+.previnex-login-avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: tint-color($previnex-brand, 88%);
+    color: $previnex-brand-soft;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin: 0 auto 1rem;
+}
+
+.previnex-login-title {
+    color: $previnex-brand-darker;
+    margin-bottom: 0.25rem;
+    font-weight: 700;
+}
+
+.previnex-login-subtitle,
+.previnex-login-footer {
+    color: $previnex-text-muted;
+}
+
+.previnex-field {
+    position: relative;
+}
+
+.previnex-field .form-control {
+    min-height: 44px;
+    border-radius: 5px;
+    border-color: $previnex-border;
+    padding-left: 2.5rem;
+    padding-right: 1rem;
+}
+
+.previnex-field .form-control:focus {
+    border-color: $previnex-brand;
+    box-shadow: 0 0 0 0.15rem rgba($previnex-brand, 0.12);
+}
+
+.previnex-field-icon,
+.previnex-field-toggle {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    color: mix($previnex-text-muted, $previnex-brand-darker, 72%);
+    z-index: 2;
+}
+
+.previnex-field-icon {
+    left: 0.8rem;
+}
+
+.previnex-field-toggle {
+    right: 0.75rem;
+    background: transparent;
+    border: 0;
+    padding: 0;
+}
+
+.previnex-field--password .form-control {
+    padding-right: 2.5rem;
+}
+
+.previnex-login-button {
+    min-height: 46px;
+    border: 0;
+    border-radius: 5px;
+    background: linear-gradient(90deg, $previnex-brand-deep 0%, $previnex-brand-mid 100%);
+    font-weight: 600;
+}
+
+.previnex-login-button:hover,
+.previnex-login-button:focus,
+.previnex-login-button:active {
+    background: linear-gradient(90deg, shade-color($previnex-brand-deep, 12%) 0%, shade-color($previnex-brand-mid, 12%) 100%) !important;
+}
+
+.previnex-login-links {
+    text-align: center;
+    margin-top: 1.5rem;
+}
+
+.previnex-login-links a {
+    color: $previnex-brand;
+    text-decoration: none;
+}
+
+.previnex-login-links p {
+    color: $previnex-text-muted;
+    margin: 0.9rem 0 0;
+}
+
+@media (max-width: 991px) {
+    .previnex-login-card {
+        grid-template-columns: 1fr;
+    }
+
+    .previnex-login-brand-panel,
+    .previnex-login-form-panel {
+        min-height: auto;
+    }
+}

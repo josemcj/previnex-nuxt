@@ -1,6 +1,6 @@
 export default defineAppConfig({
-  title: 'Previnex',
-  description: 'Previnex App.',
+  title: 'PreviNex',
+  description: 'PreviNex App.',
 
   layout: {
     type: 'horizontal' as 'horizontal' | 'vertical',
