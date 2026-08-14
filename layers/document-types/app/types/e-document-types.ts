@@ -1,11 +1,4 @@
-export interface EDocumentTypeStatus {
-  id: number;
-  name: string;
-  name_es?: string;
-  name_zh?: string;
-  created_at?: string;
-  updated_at?: string;
-}
+import type { RecordStatus } from '#layers/shared/app/types/RecordStatus';
 
 export interface ERequiredDocument {
   id: number;
@@ -21,7 +14,7 @@ export interface EDocumentType {
   vucem_code: string | null;
   required_document_id: number | null;
   status_id: number | string;
-  status?: EDocumentTypeStatus;
+  status?: RecordStatus;
   requiredDocument?: ERequiredDocument | null;
   created_at?: string;
   updated_at?: string;
