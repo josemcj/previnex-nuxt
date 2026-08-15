@@ -1,11 +1,4 @@
-export interface StandardStatus {
-  id: number;
-  name: string;
-  name_es: string;
-  name_zh: string;
-  created_at: string;
-  updated_at: string;
-}
+import type { RecordStatus } from '#layers/shared/app/types/RecordStatus';
 
 export interface Standard {
   id: number;
@@ -15,7 +8,7 @@ export interface Standard {
   complement_2: string | null;
   complement_3: string | null;
   status_id: string | number;
-  status: StandardStatus;
+  status: RecordStatus;
   created_at: string;
   updated_at: string;
   trackings: unknown[];
