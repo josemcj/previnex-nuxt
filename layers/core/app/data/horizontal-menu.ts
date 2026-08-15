@@ -20,7 +20,7 @@ export const horizontalMenuItems: HorizontalMenuItem[] = [
         subItems: [
           { id: 211, label: 'Normas', link: '/catalogs/standards', icon: 'bx-receipt', parentId: 21 },
           { id: 212, label: 'Documentos Requeridos', link: '#', icon: 'bx-file', parentId: 21 },
-          { id: 213, label: '69b', link: '#', icon: 'bx-file-find', parentId: 21 },
+          { id: 213, label: '69b', link: '/catalogs/69b', icon: 'bx-file-find', parentId: 21 },
           {
             id: 214,
             label: 'Tipos de documentos',
