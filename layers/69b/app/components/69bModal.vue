@@ -3,6 +3,7 @@ import { helpers, integer, maxLength, required } from '@vuelidate/validators';
 import type { ModalMode } from '#layers/shared/app/types/crud';
 import type { _69bPayload, _69bRecord } from '../types/_69b';
 import { use69bApi } from '../composables/use69bApi';
+import DynamicSelect from '#layers/shared/app/components/forms/DynamicSelect.vue';
 
 type Form69b = Omit<_69bPayload, 'status_id'>;
 
@@ -61,7 +62,10 @@ const rules = {
     },
     presumption_date: {},
     sat_global_official_number: {
-      maxLength: helpers.withMessage('El número de oficio global SAT no debe exceder los 100 caracteres.', maxLength(100)),
+      maxLength: helpers.withMessage(
+        'El número de oficio global SAT no debe exceder los 100 caracteres.',
+        maxLength(100),
+      ),
     },
     sat_global_official_date: {},
   },
@@ -207,8 +211,8 @@ watch(
         </div>
       </BFormGroup>
 
-      <BFormGroup class="mb-3" label="ID situación del contribuyente" label-for="record-69b-taxpayer-status-id">
-        <BFormInput
+      <BFormGroup class="mb-3" label="Situación del contribuyente" label-for="record-69b-taxpayer-status-id">
+        <!-- <BFormInput
           id="record-69b-taxpayer-status-id"
           v-model="form.taxpayer_69b_status_id"
           type="number"
@@ -216,7 +220,12 @@ watch(
           placeholder="Ingresa el ID de la situación"
           :disabled="isSubmitting"
           :class="[validator.getClassName('taxpayer_69b_status_id'), { 'is-invalid': backendErrors.taxpayer_69b_status_id?.length }]"
-          @blur="validator.touchElement('taxpayer_69b_status_id')" />
+          @blur="validator.touchElement('taxpayer_69b_status_id')" /> -->
+        <DynamicSelect
+          label=""
+          uri="/taxpayer-69b-statuses/active"
+          v-model="form.taxpayer_69b_status_id"
+          :class-name="validator.getClassName('taxpayer_69b_status_id')" />
         <FormsInputErrors :errors="validator.getErrors('taxpayer_69b_status_id')" />
         <div v-for="message in backendErrors.taxpayer_69b_status_id" :key="message" class="invalid-feedback d-block">
           {{ message }}
@@ -230,7 +239,10 @@ watch(
           maxlength="100"
           placeholder="Ingresa el número de presunción"
           :disabled="isSubmitting"
-          :class="[validator.getClassName('presumption_number'), { 'is-invalid': backendErrors.presumption_number?.length }]"
+          :class="[
+            validator.getClassName('presumption_number'),
+            { 'is-invalid': backendErrors.presumption_number?.length },
+          ]"
           @blur="validator.touchElement('presumption_number')" />
         <FormsInputErrors :errors="validator.getErrors('presumption_number')" />
         <div v-for="message in backendErrors.presumption_number" :key="message" class="invalid-feedback d-block">
@@ -263,7 +275,10 @@ watch(
           ]"
           @blur="validator.touchElement('sat_global_official_number')" />
         <FormsInputErrors :errors="validator.getErrors('sat_global_official_number')" />
-        <div v-for="message in backendErrors.sat_global_official_number" :key="message" class="invalid-feedback d-block">
+        <div
+          v-for="message in backendErrors.sat_global_official_number"
+          :key="message"
+          class="invalid-feedback d-block">
           {{ message }}
         </div>
       </BFormGroup>
