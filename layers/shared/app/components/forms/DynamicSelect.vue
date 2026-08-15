@@ -4,9 +4,9 @@ import type { SelectOption } from '~~/layers/shared/app/types/forms';
 type SelectValue = string | number | null;
 type SelectRecord = Record<string, unknown>;
 
-interface CollectionResponse {
-  data: SelectRecord[];
-}
+// interface CollectionResponse {
+//   data: SelectRecord[];
+// }
 
 const props = withDefaults(
   defineProps<{
@@ -35,9 +35,8 @@ async function fetchOptions(): Promise<void> {
   options.value = formSelect.loading;
 
   try {
-    const response = await $api<CollectionResponse>(props.uri);
-
-    options.value = response.data.length > 0 ? formSelect.create(response.data) : formSelect.createEmpty();
+    const response = await $api<Record<string, unknown>[]>(props.uri);
+    options.value = response.length > 0 ? formSelect.create(response) : formSelect.createEmpty();
   } catch {
     options.value = formSelect.createError();
   }
